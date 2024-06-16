@@ -9,6 +9,7 @@ import {
   QueueType,
   Status,
 } from '../../typings/app';
+import {Metrics} from "./bullMQ";
 
 export abstract class BaseAdapter {
   public readonly readOnlyMode: boolean;
@@ -49,7 +50,7 @@ export abstract class BaseAdapter {
   }
 
   public abstract clean(queueStatus: JobCleanStatus, graceTimeMs: number): Promise<void>;
-
+  public abstract getStats(start?:number,end?:number): Promise<Metrics | undefined>
   public abstract addJob(name: string, data: any, options: QueueJobOptions): Promise<QueueJob>;
 
   public abstract getJob(id: string): Promise<QueueJob | undefined | null>;

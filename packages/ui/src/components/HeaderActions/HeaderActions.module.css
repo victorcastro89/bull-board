@@ -17,3 +17,21 @@
 .button > svg {
   width: 1.5rem;
 }
+
+.navLinks {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.navLink {
+  font-size: 1rem;
+  padding: 0.65rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.navLink:hover,
+.navLink.active {
+  color: #007bff;
+}

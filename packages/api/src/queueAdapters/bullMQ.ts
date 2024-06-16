@@ -9,7 +9,16 @@ import {
 } from '../../typings/app';
 import { STATUSES } from '../constants/statuses';
 import { BaseAdapter } from './base';
+export interface Metrics {
 
+  meta: {
+    count: number;
+    prevTS: number;
+    prevCount: number;
+  };
+  data: number[];
+  count: number;
+}
 export class BullMQAdapter extends BaseAdapter {
   constructor(private queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
     super('bullmq', options);
@@ -35,7 +44,12 @@ export class BullMQAdapter extends BaseAdapter {
   public getJob(id: string): Promise<Job | undefined> {
     return this.queue.getJob(id);
   }
+  public getStats(start?:number,end?:number): Promise<Metrics | undefined> {
 
+ return  this.queue.getMetrics('completed',start,end);
+
+
+  }
   public getJobs(jobStatuses: JobStatus[], start?: number, end?: number): Promise<Job[]> {
     return this.queue.getJobs(jobStatuses, start, end);
   }

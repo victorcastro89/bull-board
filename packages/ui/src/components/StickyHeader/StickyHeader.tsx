@@ -6,6 +6,7 @@ export const StickyHeader = ({
   children,
 }: PropsWithChildren<{ actions: React.ReactElement }>) => (
   <div className={s.stickyHeader}>
+
     {children}
     {!!actions && <div className={s.actionContainer}>{actions}</div>}
   </div>

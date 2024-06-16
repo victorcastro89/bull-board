@@ -9,6 +9,7 @@ import {
 } from '../../typings/app';
 import { STATUSES } from '../constants/statuses';
 import { BaseAdapter } from './base';
+import {Metrics} from "./bullMQ";
 
 export class BullAdapter extends BaseAdapter {
   constructor(public queue: Queue, options: Partial<QueueAdapterOptions> = {}) {
@@ -18,7 +19,9 @@ export class BullAdapter extends BaseAdapter {
   public getRedisInfo(): Promise<string> {
     return this.queue.client.info();
   }
-
+  public getStats(start?:number,end?:number): Promise<Metrics | undefined> {
+    return this.queue.getMetrics('completed',start,end);
+  }
   public getName(): string {
     return `${this.prefix}${this.queue.name}`;
   }

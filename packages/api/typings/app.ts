@@ -1,6 +1,7 @@
 import { RedisInfo } from 'redis-info';
 import { STATUSES } from '../src/constants/statuses';
 import { BaseAdapter } from '../src/queueAdapters/base';
+import {Metrics} from "bullmq";
 
 export type JobCleanStatus = 'completed' | 'wait' | 'active' | 'delayed' | 'failed';
 
@@ -126,6 +127,7 @@ export interface AppQueue {
   allowCompletedRetries: boolean;
   isPaused: boolean;
   type: QueueType;
+  metrics:Metrics |undefined;
 }
 
 export type HTTPMethod = 'get' | 'post' | 'put';

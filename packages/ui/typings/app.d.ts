@@ -5,6 +5,9 @@ import {
   JobRetryStatus,
   Status,
 } from '@bull-board/api/typings/app';
+import {TimeUnit} from "../src/hooks/useQueues";
+import {GetMetricsResponse} from "@bull-board/api/typings/responses";
+
 
 export { Status } from '@bull-board/api/typings/app';
 
@@ -20,6 +23,9 @@ export interface QueueActions {
   updateQueues: () => Promise<void>;
   pollQueues: () => void;
   addJob: (queueName: string, jobName: string, jobData: any, jobOptions: any) => () => Promise<void>;
+  pullMetrics: (start: number, end: number, timeframe: TimeUnit) => void
+
+
 }
 
 export interface JobActions {

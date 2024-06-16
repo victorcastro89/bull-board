@@ -1,11 +1,12 @@
 import * as Bull from 'bull';
 import Queue3 from 'bull';
-import { Queue as QueueMQ, Worker, FlowProducer } from 'bullmq';
+import { Queue as QueueMQ, Worker, FlowProducer, MetricsTime } from 'bullmq';
 import express from 'express';
 import { BullMQAdapter } from '@bull-board/api/src/queueAdapters/bullMQ';
 import { BullAdapter } from '@bull-board/api/src/queueAdapters/bull';
 import { createBullBoard } from '@bull-board/api/src';
 import { ExpressAdapter } from '@bull-board/express/src';
+
 
 const redisOptions = {
   port: 6379,
@@ -20,32 +21,19 @@ const createQueueMQ = (name: string) => new QueueMQ(name, { connection: redisOpt
 
 function setupBullProcessor(bullQueue: Bull.Queue) {
   bullQueue.process(async (job) => {
-    for (let i = 0; i <= 100; i++) {
-      await sleep(Math.random());
-      await job.progress(i);
-      await job.log(`Processing job at interval ${i}`);
-      if (Math.random() * 200 < 1) throw new Error(`Random error ${i}`);
-    }
-
+    await sleep(1); // Job takes 1 second to finish
     return { jobId: `This is the return value of job (${job.id})` };
   });
 }
 
 async function setupBullMQProcessor(queueName: string) {
   new Worker(
-    queueName,
-    async (job) => {
-      for (let i = 0; i <= 100; i++) {
-        await sleep(Math.random());
-        await job.updateProgress(i);
-        await job.log(`Processing job at interval ${i}`);
-
-        if (Math.random() * 200 < 1) throw new Error(`Random error ${i}`);
-      }
-
-      return { jobId: `This is the return value of job (${job.id})` };
-    },
-    { connection: redisOptions }
+      queueName,
+      async (job) => {
+        await sleep(1); // Job takes 1 second to finish
+        return { jobId: `This is the return value of job (${job.id})` };
+      },
+      { connection: redisOptions, metrics: { maxDataPoints: MetricsTime.ONE_WEEK * 2 }, concurrency: 4 }
   );
 }
 
@@ -56,8 +44,14 @@ const run = async () => {
   const exampleBullMq = createQueueMQ('ExampleBullMQ');
   const flow = new FlowProducer({ connection: redisOptions });
 
-  await setupBullProcessor(exampleBull); // needed only for example proposes
-  await setupBullMQProcessor(exampleBullMq.name); // needed only for example proposes
+  await setupBullProcessor(exampleBull);
+  await setupBullMQProcessor(exampleBullMq.name);
+
+  // Automatically add a job every second
+  setInterval(() => {
+    exampleBull.add({ title: 'ExampleBull Job' });
+    exampleBullMq.add('Add', { title: 'ExampleBullMQ Job' });
+  }, 1000);
 
   app.use('/add', (req, res) => {
     const opts = req.query.opts || ({} as any);

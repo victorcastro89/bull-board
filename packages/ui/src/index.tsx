@@ -13,24 +13,24 @@ import './toastify.css';
 import { initI18n } from './services/i18n';
 
 const basePath = ((window as any).__basePath__ =
-  document.head.querySelector('base')?.getAttribute('href') || '');
+    document.head.querySelector('base')?.getAttribute('href') || '');
 const api = new Api({ basePath });
 const uiConfig = JSON.parse(
-  document.getElementById('__UI_CONFIG__')?.textContent || '{}'
+    document.getElementById('__UI_CONFIG__')?.textContent || '{}'
 ) as UIConfig;
 
 const settingsLang = useSettingsStore.getState().language;
 const lng = settingsLang || uiConfig.locale?.lng || navigator.language || 'en-US';
 
 initI18n({ lng, basePath }).then(() => {
-  render(
-    <BrowserRouter basename={basePath}>
-      <UIConfigContext.Provider value={uiConfig}>
-        <ApiContext.Provider value={api}>
-          <App />
-        </ApiContext.Provider>
-      </UIConfigContext.Provider>
-    </BrowserRouter>,
-    document.getElementById('root')
-  );
+    render(
+        <BrowserRouter basename={basePath}>
+            <UIConfigContext.Provider value={uiConfig}>
+                <ApiContext.Provider value={api}>
+                    <App />
+                </ApiContext.Provider>
+            </UIConfigContext.Provider>
+        </BrowserRouter>,
+        document.getElementById('root')
+    );
 });

@@ -10,6 +10,7 @@ import {
   Status,
 } from '../../typings/app';
 import { BaseAdapter } from '../queueAdapters/base';
+import {Metrics} from "bullmq";
 
 export const formatJob = (job: QueueJob, queue: BaseAdapter): AppJob => {
   const jobProps = job.toJSON();
@@ -59,6 +60,7 @@ async function getAppQueues(
   pairs: [string, BaseAdapter][],
   query: Record<string, any>
 ): Promise<AppQueue[]> {
+
   return Promise.all(
     pairs.map(async ([queueName, queue]) => {
       const isActiveQueue = decodeURIComponent(query.activeQueue) === queueName;
@@ -69,7 +71,7 @@ async function getAppQueues(
       const status =
         !isActiveQueue || query.status === 'latest' ? jobStatuses : [query.status as JobStatus];
       const currentPage = +query.page || 1;
-
+      const metrics:Metrics|undefined = await queue.getStats()
       const counts = await queue.getJobCounts();
       const isPaused = await queue.isPaused();
 
@@ -90,6 +92,7 @@ async function getAppQueues(
         allowCompletedRetries: queue.allowCompletedRetries,
         isPaused,
         type: queue.type,
+        metrics: metrics
       };
     })
   );

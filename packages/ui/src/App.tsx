@@ -16,6 +16,9 @@ import { useSettingsStore } from './hooks/useSettings';
 const JobPageLazy = React.lazy(() =>
   import('./pages/JobPage/JobPage').then(({ JobPage }) => ({ default: JobPage }))
 );
+const StatsPageLazy = React.lazy(() =>
+    import('./pages/StatsPage/StatsPage').then(({ StatsPage}) => ({ default: StatsPage }))
+);
 
 const QueuePageLazy = React.lazy(() =>
   import('./pages/QueuePage/QueuePage').then(({ QueuePage }) => ({ default: QueuePage }))
@@ -56,7 +59,7 @@ export const App = () => {
             <Switch>
               <Route path="/queue/:name/:jobId" render={() => <JobPageLazy />} />
               <Route path="/queue/:name" render={() => <QueuePageLazy />} />
-
+              <Route path="/statistics"  render={() => <StatsPageLazy />} />
               <Route path="/" exact render={() => <OverviewPageLazy />} />
             </Switch>
           </Suspense>

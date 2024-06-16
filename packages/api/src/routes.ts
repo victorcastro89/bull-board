@@ -14,16 +14,18 @@ import { resumeQueueHandler } from './handlers/resumeQueue';
 import { retryAllHandler } from './handlers/retryAll';
 import { retryJobHandler } from './handlers/retryJob';
 import { promoteAllHandler } from './handlers/promoteAll';
+import {queueStatsHandler} from "./handlers/queueStats";
 
 export const appRoutes: AppRouteDefs = {
   entryPoint: {
     method: 'get',
-    route: ['/', '/queue/:queueName', '/queue/:queueName/:jobId'],
+    route: ['/', '/queue/:queueName', '/queue/:queueName/:jobId','/statistics'],
     handler: entryPoint,
   },
   api: [
     { method: 'get', route: '/api/redis/stats', handler: redisStatsHandler },
     { method: 'get', route: '/api/queues', handler: queuesHandler },
+    { method: 'get', route: '/api/queues/stats', handler: queueStatsHandler },
     {
       method: 'get',
       route: '/api/queues/:queueName/:jobId/logs',
